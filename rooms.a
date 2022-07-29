@@ -1,0 +1,660 @@
+
+
+;		.start	Room descriptions
+
+		.export RMTable,OBTable,KEY,NORTH,GET,OBJPSW
+		.export tMA114,OBJHAK,OBJINS,OBJCON,tEW8,OBJSUP
+		.export	tMA153,tMA174,tMA112,OBJJLT,OBJSEV,OBJCOK,tMA160
+
+RMTable:	 OUTSID
+ 		 RMTable
+		 RMTable
+		 RMTable
+		 tNS3
+		 %0001
+tNS1:		 NS1
+		 tMA134
+		 tMA145
+		 tEW1
+		 tEW14
+		 %1111
+tMA176:		 MA176
+		 tMA112
+		 tEW13
+		 tMA176
+		 tMA176
+		 %1100
+tEW1:		 EW1
+		 tMA132
+		 tMA142
+		 tEW2
+		 tNS1
+		 %1111
+tMA132:		 MA132
+		 tMA132
+		 tEW1
+		 tMA132
+		 tMA132
+		 %0100
+tEW2:		 EW2
+		 tMENS
+		 tWOMENS
+		 tEW3
+		 tEW1
+		 %1111
+tEW3:		 EW3
+		 tOUT2
+		 tNS2
+		 tEW4
+		 tEW2
+		 %1111
+tEW4:		 EW4
+		 tMA120
+		 tMA119
+		 tEW5
+		 tEW3
+		 %1111
+tEW5:		 EW5
+		 tMA116
+		 tMA160
+		 tEW6
+		 tEW4
+		 %1111
+tEW6:		 EW6
+		 tMA114
+		 tPRINT
+		 tMA112
+		 tEW5
+		 %1111
+tEW7:		 EW7
+		 tMA139
+		 tMA151
+		 tEW8
+		 tMA145
+		 %1111
+tEW8:		 EW8
+		 tNS2
+		 tMA153
+		 tEW9
+		 tEW7
+		 %1111
+tEW9:		 EW9
+		 tMA154
+		 tMA155
+		 tEW10
+		 tEW8
+		 %1111
+tMA154:		 MA154
+		 tMA154
+		 tEW9
+		 tMA154
+		 tNS2
+		 %0101
+tMA155:		 MA155
+		 tEW9
+		 tMA155
+		 tMA155
+		 tMA155
+		 %1000
+tEW10:		 EW10
+		 tMA119
+		 tMA161
+		 tEW11
+		 tEW9
+		 %1111
+tMA161:		 MA161
+		 tEW10
+		 tMA161
+		 tMA161
+		 tMA161
+		 %1000
+tCOMMED:	 COMMED
+		 tNS3
+		 tCOMMED
+		 tCOMMED
+		 tCOMMED
+		 %1000
+tMA169:		 MA169
+		 tEW12
+		 tMA169
+		 tMA169
+		 tMA169
+		 %1000
+tMA165:		 MA165
+		 tEW11
+		 tMA165
+		 tMA165
+		 tMA165
+		 %1000
+tMA153:		 MA153
+		 tEW8
+		 tMA153
+		 tMA153
+		 tMA153
+		 %1000
+tMA151:		 MA151
+		 tEW7
+		 tMA151
+		 tMA151
+		 tMA151
+		 %1000
+tMA145:		 MA145
+		 tNS1
+		 tMA145
+		 tEW7
+		 tMA145
+		 %1010
+tMA112:		 MA112
+		 tMA112
+		 tMA176
+		 tNS3
+		 tEW6
+		 %0111
+tMA160:		 MA160
+		 tEW5
+		 tEW11
+		 tMA160
+		 tMA160
+		 %1100
+tMA119:		 MA119
+		 tEW4
+		 tEW10
+		 tMA119
+		 tMA119
+		 %1100
+tPRINT:		 PRINT
+		 tEW6
+		 tPRINT
+		 tPRINT
+		 tPRINT
+		 %1000
+tMA174:		 MA174
+		 tMA174
+		 tEW12
+		 tMA174
+		 tMA174
+		 %0100
+tMA139:		 MA139
+		 tMA139
+		 tEW7
+		 tMA139
+		 tMA139
+		 %0100
+tNS2:		 NS2
+		 tEW3
+		 tEW8
+		 tMA154
+		 tNS2
+		 %1110
+tNS3:		 NS3
+		 tNS3
+		 tCOMMED
+		 RMTable
+		 tEW13
+		 %0111
+tMA114:		 MA114
+		 tMA114
+		 tEW6
+		 tMA114
+		 tMA114
+		 %0100
+tMA116:		 MA116
+		 tMA116
+		 tEW5
+		 tMA116
+		 tMA116
+		 %0100
+tMA134:		 MA134
+		 tMA134
+		 tNS1
+		 tMA134
+		 tMA134
+		 %0100
+tMA120:		 MA120
+		 tMA120
+		 tEW4
+		 tMA120
+		 tMA120
+		 %0100
+tMENS:		 MENS
+		 tMENS
+		 tEW2
+		 tMENS
+		 tSTALL
+		 %0101
+tSTALL:		STALL
+		tWOMENS
+		tSTALL
+		tMENS
+		tSTALL
+		%1010
+tMA136:		MA136
+		tMA136
+		tEW14
+		tMA136
+		tMA136
+		%0100
+tMA142:		MA142
+		tEW1
+		tMA142
+		tMA142
+		tMA142
+		%1000
+tSTORE:		STORE
+		tEW13
+		tSTORE
+		tSTORE
+		tSTORE
+		%1000
+tEW14:		EW14
+		tMA136
+		tEW14
+		tNS1
+		tEW14
+		%1010
+tOUT2:		OUT2
+		tOUT2
+		tEW3
+		tOUT2
+		tOUT2
+		%0100
+tEW13:		EW13
+		tMA176
+		tSTORE
+		tNS3
+		tEW12
+		%1111
+tEW12:		EW12
+		tMA174
+		tMA169
+		tEW13
+		tEW11
+		%1111
+tEW11:		EW11
+		tMA160
+		tMA165
+		tEW12
+		tEW10
+		%1111
+tWOMENS:	WOMANS
+		tEW2
+		tSTALL
+		tWOMENS
+		tWOMENS
+		%1100
+
+
+
+OBTable:	tMA153
+		KEY
+
+OBJPSW:		tMA174
+		PSW
+
+		tMA112
+		PAS
+
+OBJCON:		tMA136
+		COIN
+
+		tMA176
+		PDP
+
+		RMTable
+		MAT
+
+OBJJLT:		tEW12
+		JLT
+
+OBJCOK:		tMA145
+		COK
+
+OBJSEV:		tEW7
+		SEV
+
+		tMA120
+		CHP
+
+		tMA120
+		BRD
+
+		tPRINT
+		PRT
+
+		tMA142
+		FMA
+
+		tMA165
+		RS2
+
+		tMA114
+		AMB			;Permanent objects....
+
+		tMA119
+		SUN
+
+		tMA160
+		V52
+
+		tMA116
+		V50
+
+OBJINS:		tNS2
+		INS
+
+OBJSUP:		tEW8
+		SYS
+
+		tMA174
+		MAN
+
+OBJHAK:		tMENS
+		HAK
+
+OUTSID:		.ascii "You are outside the CPSC floor. To enter the"
+		.byte 12
+		.ascii "terminal rooms, go west."
+		.byte 12,00
+NS1:		.ascii "You are in a north-south hallway, to the west"
+		.byte 12
+		.ascii "leads to the CSUS office."
+		.byte 12,00
+MA176:		.ascii "This is the VAXC terminal room. There is an exit"
+		.byte 12
+		.ascii "to the north and south. There are rows of VT102's here."
+		.byte 12,00
+STALL:		.ascii "You are now in the sit-down urinal. An unpleasant"
+		.byte 12
+		.ascii "odor is present. What now?"
+		.byte 12,00
+MA136:		.ascii "This is the CSUS office. Notice the artwork. A"
+		.byte 12
+		.ascii "doorway out leads to the south."
+		.byte 12,00
+EW1:		.ascii "You are at the end of a long east-west hallway."
+		.byte 12
+		.ascii "An opening to the north leads to a small room. To the"
+		.byte 12
+		.ascii "south is a slightly large room."
+		.byte 12,00
+
+EW12:		.ascii "This is part of a long east-west hallway. You can hear"
+		.byte 12
+		.ascii "loud rumbling noise to the north."
+		.byte 12,00
+
+EW6:		.ascii "You are in a hallway just outside the tutorial room. To the"
+		.byte 12
+		.ascii "south you can here a chattering sound."
+		.byte 12,00
+EW11:
+EW10:
+EW5:
+EW2:		.ascii "You are in part of a long east-west hallway. Exits lead"
+		.byte 12
+		.ascii "north and south."
+		.byte 12,00
+EW3:		.ascii "You are in an open hallway, with elevators to the south"
+		.byte 12
+		.ascii "There are glass doors to east. North leads out."
+		.byte 12,00
+EW4:		.ascii "You are in a East-West hallway, with glass doors to the west."
+		.byte 12
+		.ascii "Passages go north and south."
+		.byte 12,00
+COMMED:		.ascii "This is the comm-media room. A single exit goes north."
+		.byte 12,00
+MA169:		.ascii "You are in the advanced graphics lab. There is a single un-watched"
+		.byte 12
+		.ascii "iris termial here. Other terminials are doing ray-tacing stuff."
+		.byte 12
+		.ascii "An exit goes north."
+		.byte 12,00
+MA165:		.ascii "You are in the develnet terminal room. There are"
+		.byte 12
+		.ascii "several terminals hooked up to develet here."
+		.byte 12,00
+MA153:		.ascii "This is dave's office. An exit lies to the North."
+		.byte 12
+		.ascii "There is a large terminal here. You don't see Dave so you"
+		.byte 12
+		.ascii "don't mind snooping."
+		.byte 12,00
+MA151:		.ascii "This is Kieth's and Terry's office. A passage leads north."
+		.byte 12,00
+MA145:		.ascii "You are in the CSUS lounge. A Coke machine attracts you attention."
+		.byte 12
+		.ascii "You notice an exit north and east."
+		.byte 12,00
+EW7:		.ascii "You are at the end of a great east-west hallway. To the"
+		.byte 12
+		.ascii "north is a small terminal room."
+		.byte 12,00
+MA174:		.ascii "You are in the machine room. The vax's are all here."
+		.byte 12
+		.ascii "The loud rumble of machinery can be heard."
+		.byte 12
+		.ascii "A large iron door is on the south wall."
+		.byte 12,00
+PRINT:		.ascii "You are in a small room with a printer here. It is"
+		.byte 12
+		.ascii "faithfully printing away. A small door is on the north wall."
+		.byte 12,00
+MA160:		.ascii "This is the VAXD terminal room. To the north is an exit."
+		.byte 12
+		.ascii "There is an exit south. There are z80 designs on the chalk"
+		.byte 12
+		.ascii "board."
+		.byte 12,00
+MA119:		.ascii "You are in the sun terminal room. Someone has forgot"
+		.byte 12
+		.ascii "to logout. There is an exit north and south."
+		.byte 12,00
+NS2:		.ascii "This is the north-south hallway. To the east is a"
+		.byte 12
+		.ascii "Electronics lab."
+		.byte 12,00
+MA139:		.ascii "This is the Systems lab. You see terminals,large screens,"
+		.byte 12
+		.ascii "and mice our everywhere."
+		.byte 12,00
+NS3:		.ascii "This is a small north-south hallway. To the north are some"
+		.byte 12
+		.ascii "locked glass doors. An opening to the east leads outside."
+		.byte 12,00
+EW13:		.ascii "This is the start of a long east-west hallway. To the west"
+		.byte 12
+		.ascii "are some glass doors. To the north is a large terminal room."
+		.byte 12,00
+
+EW8:		.ascii "This is part of a long east-west hallway, with a"
+		.byte 12
+		.ascii "large door to the south. The sign on the door says 'DAVE'."
+		.byte 12,00
+EW9:		.ascii "This is part of a long east-west hallway."
+		.byte 12,00
+MA112:		.ascii "You are in a huge terminal room. (vaxa)"
+		.byte 12
+		.ascii "Shhh, some 211'ers are sleeping here. Exits go south"
+		.byte 12
+		.ascii "east and west."
+		.byte 12,00
+MA114:		.ascii "You are in the continous tutorial room. The"
+		.byte 12
+		.ascii "ambassador terminal was left in csh. A single exit"
+		.byte 12
+		.ascii "goes south."
+		.byte 12,00
+MA116:		.ascii "You have entered into the graphics terminal room."
+		.byte 12
+		.ascii "To the south is an exit. A V550 is drawing stuff."
+		.byte 12,00
+MA120:		.ascii "This is the junior logic lab. There are wires and chips"
+		.byte 12
+		.ascii "everywhere. A large door is on the south wall."
+		.byte 12,00
+MENS:		.ascii "This is the men's wash room. There is nothing here"
+		.byte 12
+		.ascii "but urinals. Wash your hands? A door is on the south wall."
+		.byte 12,00
+WOMANS:		.ascii "You are in the women's bathroom. Unlike the men's bathroom"
+		.byte 12
+		.ascii "this room is spotlessly clean. A door is on the north wall."
+		.byte 12,00
+MA142:		.ascii "You have entered the Micro Computer Lab. Rows of 6502 based"
+		.byte 12
+		.ascii "machines are here. An exit goes north."
+		.byte 12,00
+MA134:		.ascii "You are in the disabled students computer lab. There is"
+		.byte 12
+		.ascii "a single exit south."
+		.byte 12,00
+OUT2:		.ascii "You have wandered out into the university campus."
+		.byte 12
+		.ascii "Go south to re-enter the CPSC floor."
+		.byte 12,00
+MA132:		.ascii "This is the 504 Lab. Not much here, except a door on"
+		.byte 12
+		.ascii "the south wall."
+		.byte 12,00
+MA161:		.ascii "This is the senior logic lab. You see strange hardware"
+		.byte 12
+		.ascii "creations here. A door leads north."
+		.byte 12,00
+MA154:		.ascii "You are in the Electronics Lab. A door leads west. There"
+		.byte 12
+		.ascii "is an exit south. There is a lot of stuff here."
+		.byte 12,00
+EW14:		.ascii "You are in a small corridor just outside the CSUS office."
+		.byte 12
+		.ascii "A hallway goes to the east. To the north is the office."
+		.byte 12,00
+MA155:		.ascii "This is the hardware technical support office. a"
+		.byte 12
+		.ascii "large door is on the north wall."
+		.byte 12,00
+STORE:		.ascii "You are in a small storage room. Junk is here."
+		.byte 12
+		.ascii "An exit goes north."
+		.byte 12,00
+
+
+;-------- Object table -------------;
+;           text		    ;
+
+KEY:		.ascii "key" ;;; asciz
+		.byte 0
+PSW:		.ascii "password" ;;; asciz
+		.byte 0
+PAS:		.ascii "pascal text" ;;; asciz
+		.byte 0
+COIN:		.ascii "coin" ;;; asciz
+		.byte 0
+PDP:		.ascii "pdp-11 text" ;;; asciz
+		.byte 0
+MAT:		.ascii "math271 text" ;;; asciz
+		.byte 0
+JLT:		.ascii "jolt" ;;; asciz
+		.byte 0
+COK:		.ascii "coke" ;;; asciz
+		.byte 0
+SEV:		.ascii "sev" ;;; asciz
+		.byte 0
+CHP:		.ascii "z80 cpu" ;;; asciz
+		.byte 0
+BRD:		.ascii "dart" ;;; asciz
+		.byte 0
+PRT:		.ascii "printout" ;;; asciz
+		.byte 0
+FMA:		.ascii "disk" ;;; asciz
+		.byte 0
+RS2:		.ascii "rs232 cable" ;;; asciz
+		.byte 0
+AMB:		.ascii "ambassador terminal"  ;;; asciz
+		.byte 0
+SUN:		.ascii "sun terminal" ;;; asciz
+		.byte 0
+V52:		.ascii "vt102 terminal" ;;; asciz
+		.byte 0
+V50:		.ascii "v550 terminal" ;;; asciz
+		.byte 0
+INS:		.ascii "insane hacker" ;;; asciz
+		.byte 0
+SYS:		.ascii "super user" ;;; asciz
+		.byte 0
+MAN:		.ascii "vax 11/780" ;;; asciz
+		.byte 0
+HAK:		.ascii "proffesor" ;;; asciz
+		.byte 0
+		.byte 00
+
+;------- Directions table --------
+;-----      TEXT ------
+
+NORTH:		.ascii "north" ;;; asciz
+		.byte 0
+SOUTH:		.ascii "south" ;;; asciz
+		.byte 0
+EAST:		.ascii "east" ;;; asciz
+		.byte 0
+WEST:		.ascii "west" ;;; asciz
+		.byte 0
+		.byte 00
+
+
+;------- Commands table -------
+;----- TEXT ------
+
+GET:		.ascii "get" ;;; asciz
+		.byte 0
+CNORTH:		.ascii "north" ;;; asciz
+		.byte 0
+CSOUTH:		.ascii "south" ;;; asciz
+		.byte 0
+CEAST:		.ascii "east" ;;; asciz
+		.byte 0
+CWEST:		.ascii "west" ;;; asciz
+		.byte 0
+TAKE:		.ascii "take" ;;; asciz
+		.byte 0
+DROP:		.ascii "drop" ;;; asciz
+		.byte 0
+PUT:		.ascii "put" ;;; asciz
+		.byte 0
+LOOK:		.ascii "look" ;;; asciz
+		.byte 0
+HELP:		.ascii "help" ;;; asciz
+		.byte 0
+INV:		.ascii "inventory" ;;; asciz
+		.byte 0
+LOGIN:		.ascii "login" ;;; asciz
+		.byte 0
+DRINK:		.ascii "drink" ;;; asciz
+		.byte 0
+READ:		.ascii "read" ;;; asciz
+		.byte 0
+QUIT:		.ascii "quit" ;;; asciz
+		.byte 0
+MOVE:		.ascii "move" ;;; asciz
+		.byte 0
+WAIT:		.ascii "wait" ;;; asciz
+		.byte 0
+USE:		.ascii "use" ;;; asciz
+		.byte 0
+EAT:		.ascii "eat" ;;; asciz
+		.byte 0
+LOGOUT:		.ascii "logout" ;;; asciz
+		.byte 0
+REBOOT:		.ascii "reboot" ;;; asciz
+		.byte 0
+SCORE:		.ascii "score" ;;; asciz
+		.byte 0
+GO:		.ascii "go" ;;; asciz
+		.byte 0
+ASK:		.ascii "ask" ;;; asciz
+		.byte 0
+		.byte 00
+
+
+;		.end
+

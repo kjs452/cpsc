@@ -1,0 +1,952 @@
+
+;		.start cpsc advent
+
+		.import PREZ,COMAND,COMPR,PROCT
+		.import RMTable,OBTable,KEY,NORTH,GET
+		.import tMA114,OBJHAK,OBJINS,OBJCON,tMA153,tMA174,OBJSUP
+		.import tEW8,OBJJLT,OBJSEV,OBJCOK,tMA112,tMA160,OBJPSW
+
+		.export KENADV
+
+KENADV:		mov	#RMTable,R4
+		mov	#TITLE,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+Main:		jsr	PC,MovStf
+		jsr	PC,PrRoom
+		jsr	PC,PrObj
+GetCom:		jsr	PC,PrCR
+		jsr	PC,PrProm
+		jsr	PC,GetCmd
+		jsr	PC,NulCmd
+		mov	#BUFFER,R0		;Point to first cmd.
+		mov	#GET,R1			;Point to cnd list.
+		jsr	PC,COMAND		;Find command
+		cmp	R0,#00			;Command not found?
+		bne	Skip5			;If not then skip
+		jsr	PC,ErrCmd
+		br	GetCom
+Skip5:		dec	R0
+		asl	R0
+		add	#RUNTBL,R0		;R0 point to adress to run.
+		mov	(R0),PC			;Jump to command.
+
+TITLE:		.ascii "This program recognizes the following commands:"
+		.byte 12
+		.ascii "    go,move,get,put,take,drop,help*,login*,ask*,read*"
+		.byte 12
+		.ascii "    drink,eat,look,wait,inventory,score and quit."
+		.byte 12
+		.ascii "Use north,south,east or west to move instead of go."
+		.byte 12
+		.ascii "NOTE: * denotes an important command."
+		.byte 12,00
+		.even
+
+MovStf:		mov	R0,-(SP)
+		mov	R1,-(SP)
+		mov	R2,-(SP)
+		mov	R3,-(SP)
+		cmp	ObjCnt,#$49
+		bne	Skip20
+		clr	ObjCnt
+Skip20:		mov	ObjCnt,R0
+		asl	R0
+		mov	R0,R1			;Save R0
+		mov	PROFMV(R0),R3		;Move prof
+		asl	R3
+		mov	OBJHAK,R2
+		add	R2,R3
+		mov	(R3),OBJHAK
+		mov	R1,R0			;Move insane
+		mov	INSMV(R0),R3
+		asl	R3
+		mov	OBJINS,R2
+		add	R2,R3
+		mov	(R3),OBJINS
+		jsr	PC,ChkDrk		;Check for drink in termR
+		mov	(SP)+,R3
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		inc	ObjCnt
+		rts	PC
+ObjCnt:		.word 0
+PROFMV:		.word 2,3,3,1,2,3,1,2,3,3,2,2,4,4,2,1,4,4,1,4,1,4,1
+		.word 2,3,2,2,3,3,1,2,3,1,1,1,2,2,2,3,3,1,1,4,4,4,2,1,4,1
+INSMV:		.word 2,4,1,2,4,1,3,3,1,2,3,2,3,2,4,1
+		.word 2,4,1,2,4,1,3,3,1,2,3,2,3,2,4,1
+		.word 2,4,1,2,4,1,3,3,1,2,3,2,3,2,4,1,3
+		.even
+
+ChkDrk:		cmp	OBJJLT,#tMA112
+		beq	Movem
+		cmp	OBJSEV,#tMA112
+		beq	Movem
+		cmp	OBJCOK,#tMA112
+		beq	Movem
+		mov	#tEW8,OBJSUP
+		rts	PC
+Movem:		mov	#tMA112,OBJSUP
+		rts	PC
+
+
+PrRoom:		mov	R1,-(SP)
+		mov	(R4),R1
+		jsr	PC,PREZ
+		mov	(SP)+,R1
+		rts	PC
+
+PrCR:		mov	R0,-(SP)
+		mov	#1,R0
+		trap	4
+		Temp1
+		1
+		mov	(SP)+,R0
+		rts	PC
+Temp1:		.byte 12
+		.even
+
+PrObj:		mov	R3,-(SP)
+		mov	R1,-(SP)
+		mov	#OBTable,R3
+Loop1:		cmp	(R3),#00
+		beq	Exit1
+		cmp	(R3),R4
+		beq	PrintIt
+		add	#4,R3
+		br	Loop1
+
+PrintIt:	mov	#Temp2,R1
+		jsr	PC,PREZ
+		add	#2,R3		
+		mov	(R3),R1
+		jsr	PC,PREZ
+		add	#2,R3
+		mov	#Temp3,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		br	Loop1
+Exit1:		mov	(SP)+,R1
+		mov	(SP)+,R3
+		rts	PC
+Temp3:		.ascii " is here." ;;; asciz
+		.byte 0
+Temp2:		.ascii "A " ;;; asciz
+		.byte 0
+		.even
+
+PrProm:		mov	R1,-(SP)
+		mov	#PROMPT,R1
+		jsr	PC,PREZ
+		mov	(SP)+,R1
+		rts	PC
+PROMPT:		.ascii "Well? " ;;; asciz
+		.byte 0
+		.even
+
+GetCmd:		mov	R0,-(SP)
+		mov	#0,R0
+		trap	3
+		BUFFER
+		$78
+		cmp	R0,#$78
+		blo	Exit2
+Loop3:		mov	#0,R0
+		trap	3
+		FLUSHY
+		$10
+		cmp	R0,#$10
+		bhis	Loop3
+Exit2:		mov	(SP)+,R0
+		rts	PC
+BUFFER:		.blkb $78
+		.byte 00
+FLUSHY:		.blkb $10
+		.even
+
+NulCmd:		mov	R1,-(SP)
+		mov	R0,-(SP)
+		mov	#BUFFER,R1
+		clr	R0
+Loop4:		cmpb	(R1),#40		;space
+		bne	Skip3
+		cmp	R0,#0
+		bne	Skip4
+		inc	R0
+		mov	R1,SECWRD
+		inc	SECWRD
+Skip4:		movb	#00,(R1)
+Skip3:		cmpb	(R1),#12
+		beq	Exit3
+		cmp	R1,#BUFFER+$78
+		beq	Exit3
+		inc	R1
+		br	Loop4
+Exit3:		movb	#00,(R1)
+		inc	R1
+		movb	#00,(R1)
+		mov	(SP)+,R0
+		mov	(SP)+,R1
+		rts	PC
+SECWRD:		.blkw 1
+		.even
+
+ErrCmd:		mov	R1,-(SP)
+		mov	#Temp4,R1
+		jsr	PC,PREZ
+		mov	(SP)+,R1
+		jsr	PC,PrCR
+		rts	PC
+Temp4:		.ascii "Invalid CPSC operation." ;;; asciz
+		.byte 0
+		.even
+
+cGO:		mov	R0,-(SP)
+		mov	R1,-(SP)
+		mov	R2,-(SP)
+		mov	R3,-(SP)
+		mov	#SECWRD,R0
+		mov	(R0),R0
+		mov	#NORTH,R1
+		jsr	PC,COMAND
+		cmp	R0,#00
+		bne	Skip7
+		mov	#Temp8,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R3
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jsr	PC,MovStf
+		jmp	GetCom
+Skip7:		mov	R0,R2			;Save R0
+		mov	R4,R3			;Save R4
+		asl	R0
+		add	R4,R0
+		cmp	(R0),#tMA153		;Going to daves room?
+		beq	SHTst1
+		br	GoNext
+SHTst1:		jmp	GoTst1
+GoNext:		cmp	(R0),#tMA174		;Going to machine room?
+		beq	SHTst2
+		br	GoBak
+SHTst2:		jmp	GoTst2
+GoBak:		mov	(R0),R4
+		mov	#%1111111111101111,R0
+Loop8:		asr	R0
+		dec	R2
+		bne	Loop8
+		add	#$10,R3
+		mov	(R3),R1
+		bic	R0,R1
+		bne	Skip8
+		mov	#Temp9,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R3
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jmp	GetCom
+Skip8:		mov	(SP)+,R3
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jmp	Main
+
+GoTst1:		cmp	OBJSUP,#tEW8			;Super-user gone?
+		bne	GoBak
+		mov	#Temp30,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		br	GoSk1
+GoTst2:		cmp	OBTable,#001			;1=you
+		beq	GoBak
+		mov	#Temp31,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+GoSk1:		mov	(SP)+,R3
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jmp	GetCom
+Temp8:		.ascii	"Use North,South,East or West." ;;; asciz
+		.byte 0
+Temp9:		.ascii  "This room does not have an exit that way." ;;; asciz
+		.byte 0
+Temp30:		.ascii  "The super-user blocks your way!" ;;; asciz
+		.byte 0
+Temp31:		.ascii  "The machine room is locked. A key is required." ;;; asciz
+		.byte 0
+		.even
+
+cGET:		mov	R0,-(SP)
+		mov	R1,-(SP)
+		mov	#SECWRD,R1
+		mov	(R1),R0
+		mov	#KEY,R1
+		jsr	PC,COMAND
+		cmp	R0,#00
+		bne	Skip11
+Back1:		mov	#Temp11,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jmp	GetCom
+Skip11:		cmp	R0,#$15
+		blo	Skip12
+		mov	#Temp15,R1
+		jsr	PC,PREZ
+		dec	R0
+		asl	R0
+		asl	R0
+		add	#OBTable,R0
+		add	#2,R0
+		mov	(R0),R1
+		jsr	PC,PREZ
+		mov	#Temp16,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jmp	GetCom
+Skip12:		dec	R0
+		asl	R0
+		asl	R0
+		add	#OBTable,R0
+		cmp	(R0),R4
+		bne	Back1
+		mov	#01,(R0)
+		add	#2,R0
+		mov	(R0),R1
+		jsr	PC,PREZ
+		mov	#Temp12,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jsr	PC,MovStf
+		jmp	GetCom
+Temp11:		.ascii  "That object is not here." ;;; asciz
+		.byte 0
+Temp12:		.ascii  " taken." ;;; asciz
+		.byte 0
+Temp15:		.ascii  "You cannot get the " ;;; asciz
+		.byte 0
+Temp16:		.ascii  "!" ;;; asciz
+		.byte 0
+		.even
+
+cPUT:		mov	R0,-(SP)
+		mov	R1,-(SP)
+		mov	#SECWRD,R1
+		mov	(R1),R0
+		mov	#KEY,R1
+		jsr	PC,COMAND
+		cmp	R0,#00
+		bne	Skip13
+Back2:		mov	#Temp13,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jmp	GetCom
+Skip13:		dec	R0
+		asl	R0
+		asl	R0
+		add	#OBTable,R0
+		cmp	(R0),#001
+		bne	Back2
+		mov	R4,(R0)
+		add	#2,R0
+		mov	(R0),R1
+		jsr	PC,PREZ
+		mov	#Temp14,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jsr	PC,MovStf
+		jmp	GetCom
+Temp13:		.ascii "You don't have that!" ;;; asciz
+		.byte 0
+Temp14:		.ascii " has been set down." ;;; asciz
+		.byte 0
+		.even
+
+cUSE:		jmp	NotImp
+
+cINV:		mov	R0,-(SP)
+		mov	R1,-(SP)
+		mov	#Temp10,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	#OBTable,R0
+Loop10:		cmp	(R0),#01		; 1=you.
+		bne	Skip9
+		add	#2,R0
+		mov	(R0),R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		add	#2,R0
+		br	Loop10
+Skip9:		cmp	(R0),#00		; 0=Table end.
+		beq	Exit4
+		add	#4,R0
+		br	Loop10
+Exit4:		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jsr	PC,PrCR
+		jsr	PC,MovStf
+		jmp	GetCom
+Temp10:		.ascii "Your U of C bag contains the following:" ;;; asciz
+		.byte 0
+		.even
+
+cEAT:
+		mov	SECWRD,R0
+		mov	#KEY,R1
+		jsr	PC,COMAND
+		cmp	R0,#00
+		beq	EtErr1
+		dec	R0
+		asl	R0
+		asl	R0
+		mov	OBTable(R0),R1
+		cmp	R1,#01
+		bne	EtErr2
+		mov	#02,OBTable(R0)
+		mov	#EtMsg4,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jmp	GetCom
+EtErr1:		mov	#EtMsg3,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jmp	GetCom
+EtErr2:		mov	#EtMsg2,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jmp	GetCom
+EtMsg3:		.ascii "I don't understand that food." ;;; asciz
+		.byte 0
+EtMsg2:		.ascii "You can't eat what you do not have." ;;; asciz
+		.byte 0
+EtMsg4:		.ascii "You feel better, but the objects gone." ;;; asciz
+		.byte 0
+		.even
+
+
+
+cQUIT:		mov	#Temp7,R1
+		jsr	PC,PrCR
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jsr	PC,PrCR
+		trap	1
+Temp7:		.ascii "Had enough of CPSC for one day, eh? Logout Now!" ;;; asciz
+		.byte 0
+		.even
+
+cLOGIN:
+		cmp	R4,#tMA160
+		beq	LogSk
+LogBak:		mov	#LgMsg1,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jmp	LgEnd
+LogSk:		mov	#LgMsg2,R1
+		jsr	PC,PREZ
+		jsr	PC,GetCmd
+		jsr	PC,PrCR
+		jsr	PC,NulCmd
+		mov	#BUFFER,R0
+		mov	#ROOT,R1
+		jsr	PC,COMPR
+		cmp	R0,#01
+		bne	LogNE
+		mov	#LgMsg3,R1
+		jsr	PC,PREZ
+		jsr	PC,GetCmd
+		jsr	PC,PrCR
+		jsr	PC,NulCmd
+		mov	#BUFFER,R0
+		mov	#ROTPAS,R1
+		jsr	PC,COMPR
+		cmp	R0,#01
+		bne	LogPE
+		cmp	OBJPSW,#01
+		bne	LogPE
+ReDoo:		mov	#LgMsg4,R1
+		jsr	PC,PREZ
+		jsr	PC,GetCmd
+		jsr	PC,PrCR
+		jsr	PC,NulCmd
+		mov	#BUFFER,R0
+		mov	#RBTCMD,R1
+		jsr	PC,COMPR
+		cmp	R0,#01
+		beq	Winner
+		mov	#LGTCMD,R1
+		mov	#BUFFER,R0
+		jsr	PC,COMPR
+		cmp	R0,#01
+		beq	LgEnd
+		br	LogCE
+LogCE:		mov	#LgMsg5,R1
+		jsr	PC,PREZ
+		br	ReDoo
+LogNE:		mov	#LgMsg6,R1
+		jsr	PC,PREZ
+		br	LgEnd
+LogPE:		mov	#LgMsg7,R1
+		jsr	PC,PREZ
+		br	LgEnd
+LgEnd:		jmp	GetCom
+Winner:		mov	#LgMsg8,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jsr	PC,PrCR
+		trap	1
+LgMsg8:		.ascii ".... now re-booting ...."
+		.byte 12
+		.ascii "All the terminals display garbage on the screen."
+		.byte 12
+		.ascii "Congradulations you have reset the VAX you WIN!!!!"
+		.byte 12
+		.ascii "&%#$%')&%$%''%&%$%&$TYFYT&%GF(&%F&((&%F%&~~~~~~"
+		.byte 12,12,00
+LgMsg1:		.ascii "You are unable to login here."
+		.byte 12,00
+LgMsg2:		.ascii "University of Calgary    4.2 BSD  Unix       [vaxd]"
+		.byte 12,12
+		.ascii "login: "
+		.byte 00
+LgMsg3:		.ascii "password: " ;;; asciz
+		.byte 0
+LgMsg4:		.ascii "% " ;;; asciz
+		.byte 0
+LgMsg5:		.ascii "command not found."
+		.byte 12,00
+LgMsg6:		.ascii "user not found."
+		.byte 12,00
+LgMsg7:		.ascii "login incorrect."
+		.byte 12,00
+ROOT:		.ascii "root" ;;; asciz
+		.byte 0
+		.byte 00
+ROTPAS:		.ascii "&sde!p5" ;;; asciz
+		.byte 0
+		.byte 00
+RBTCMD:		.ascii "reboot" ;;; asciz
+		.byte 0
+LGTCMD:		.ascii "logout" ;;; asciz
+		.byte 0
+		.even
+
+
+cLOGOUT:	jmp	NotImp
+cREBOOT:	jmp	NotImp
+
+cLOOK:		jmp	Main
+
+cHELP:		mov	R1,-(SP)
+		cmp	R4,#tMA114
+		beq	Help1
+		mov	#Temp6,R1
+Back4:		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R1
+		jsr	PC,MovStf
+		jmp	GetCom
+Help1:		mov	#Temp61,R1
+		jmp	Back4
+Temp6:		.ascii "Ask Theo Deraadt, or go to the continous tutorial for help."
+		.byte 12
+		.ascii "Talking to anyone else could be risky." ;;; asciz
+		.byte 0
+Temp61:		.ascii "The CT person is out to lunch. But a sign nearby reads:"
+		.byte 12
+		.ascii ".....Use REBOOT to win......" ;;; asciz
+		.byte 0
+		.even
+
+cDRINK:
+		mov	SECWRD,R0
+		mov	#KEY,R1
+		jsr	PC,COMAND
+		cmp	R0,#00
+		beq	DrErr1
+		dec	R0
+		asl	R0
+		asl	R0
+		mov	OBTable(R0),R1
+		cmp	R1,#01
+		bne	DrErr2
+		cmp	R1,OBJJLT
+		beq	DrBev
+		cmp	R1,OBJCOK
+		beq	DrBev
+		cmp	R1,OBJSEV
+		beq	DrBev
+		mov	#DrMsg1,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jmp	GetCom
+DrErr1:		mov	#DrMsg2,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jmp	GetCom
+DrErr2:		mov	#DrMsg3,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jmp	GetCom
+DrBev:		mov	#02,OBTable(R0)
+		mov	#DrMsg4,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jmp	GetCom
+DrMsg1:		.ascii "You connot drink that item!" ;;; asciz
+		.byte 0
+DrMsg2:		.ascii "I don't understand that beverage." ;;; asciz
+		.byte 0
+DrMsg3:		.ascii "You don't have that." ;;; asciz
+		.byte 0
+DrMsg4:		.ascii "The drink clears your head." ;;; asciz
+		.byte 0
+		.even
+
+		
+
+cREAD:		mov	R0,-(SP)
+		mov	R1,-(SP)
+		mov	R2,-(SP)
+		jsr	PC,PrCR
+		mov	SECWRD,R0
+		mov	#KEY,R1
+		jsr	PC,COMAND
+		cmp	R0,#00
+		beq	Skip16
+		mov	R0,R2			;Save R0.
+		dec	R2
+		asl	R2
+		asl	R2
+		add	#OBTable,R2
+		cmp	(R2),#001		;1=YOU
+		bne	Test1
+		br	Skip17
+Test1:		cmp	(R2),R4
+		bne	Skip16
+Skip17:		dec	R0
+		asl	R0
+		add	#REDTBL,R0
+		mov	(R0),R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jsr	PC,PrCR
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jsr	PC,MovStf
+		jmp	GetCom
+Skip16:		mov	#Temp17,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jsr	PC,PrCR
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jmp	GetCom
+Temp17:		.ascii "Not available for reading." ;;; asciz
+		.byte 0
+		.even
+
+REDTBL:		mKEY
+		mPSW
+		mPAS
+		mCOIN
+		mPDP
+		mMAT
+		mJLT
+		mCOK
+		mSEV
+		mCHP
+		mBRD
+		mPRT
+		mFMA
+		mRS2
+		mAMB
+		mSUN
+		mV52
+		mV50
+		mINS
+		mSYS
+		mMAN
+		mHAK
+		
+mKEY:		.ascii "..... VAX 11/780 ......" ;;; asciz
+		.byte 0
+mHAK:		.ascii "Reading the proffesor isn't allowed." ;;; asciz
+		.byte 0
+mPSW:		.ascii "The password says: &sde!p5" ;;; asciz
+		.byte 0
+mPAS:		.ascii "The book says: Adventure written by Ken Stauffer." ;;; asciz
+		.byte 0
+mCOIN:		.ascii "The coin reads like an other 50 cent piece." ;;; asciz
+		.byte 0
+mPDP:		.ascii "The book says: 'PDP-11 assembly programming'" ;;; asciz
+		.byte 0
+mMAT:		.ascii "Sorry this book is in greek." ;;; asciz
+		.byte 0
+mJLT:		.ascii "The can of Jolt says:"
+		.byte 12
+		.ascii "	WARNING: In experimental tests with students ..." ;;; asciz
+		.byte 0
+mCOK:		.ascii "The can says Coke." ;;; asciz
+		.byte 0
+mSEV:		.ascii "The seven eleven slurpie has nothing on it to read." ;;; asciz
+		.byte 0
+mCHP:		.ascii "The LSI chip has printed on it: Zilog Z80CPU" ;;; asciz
+		.byte 0
+mBRD:		.ascii "The LSI chip has Zilog printed on it." ;;; asciz
+		.byte 0
+mPRT:		.ascii "Part of the print out reads as follows:"
+		.byte 12
+		.ascii "The vax can only be REBOOTed by root. Roots password"
+		.byte 12
+		.ascii "is ##########."
+		.byte 12
+		.ascii "The ### text is scratched off." ;;; asciz
+		.byte 0
+mFMA:		.ascii "non-dos disk. Error reading disk. Want to format it?" ;;; asciz
+		.byte 0
+mRS2:		.ascii "The cable says 'AMP' on the side." ;;; asciz
+		.byte 0
+mAMB:		.ascii "The screen shows a csh prompt." ;;; asciz
+		.byte 0
+mSUN:		.ascii "The screen has snakes moving across the screen." ;;; asciz
+		.byte 0
+mV52:		.ascii "The screen has a login banner:"
+		.byte 12,12
+		.ascii "University of Calgary  4.2 BSD Unix    [vaxd)"
+		.byte 12,12
+		.ascii "login:" ;;; asciz
+		.byte 0
+mV50:		.ascii "You see an rwho of the vax's."
+		.byte 12
+		.ascii "It does not appear as though dave is logged in." ;;; asciz
+		.byte 0
+mINS:		.ascii "You cannot read the insane hacker." ;;; asciz
+		.byte 0
+mSYS:		.ascii "You cannot read the super user." ;;; asciz
+		.byte 0
+mMAN:		.ascii "A sign on the side of the vax reads:"
+		.byte 12
+		.ascii "   VAX 11/780 operating under 4.2 BSD Unix" ;;; asciz
+		.byte 0
+		.even
+
+cASK:		mov	R0,-(SP)
+		mov	R1,-(SP)
+		mov	R2,-(SP)
+		jsr	PC,PrCR
+		mov	SECWRD,R0
+		mov	#KEY,R1
+		jsr	PC,COMAND
+		cmp	R0,#00
+		beq	AskNFE
+		mov	R0,R2
+		dec	R2
+		asl	R2
+		asl	R2
+		add	#OBTable,R2
+		cmp	(R2),#001
+		bne	AskT2
+		br	AskSk7
+AskT2:		cmp	(R2),R4
+		bne	AskDOE
+AskSk7:		cmp	R4,OBJHAK
+		beq	AskHAK
+AskRET:		dec	R0
+		asl	R0
+		add	#ASKTBL,R0
+		mov	(R0),R1
+		jmp	AskEnd
+AskNFE:		mov	#AskM4,R1
+		jmp	AskEnd
+AskDOE:		mov	#AskM1,R1
+		jmp	AskEnd
+AskHAK:		cmp	OBJCON,#001
+		beq	AskCON
+		mov	#AskM2,ASKINS
+		jmp	AskRET
+AskCON:		mov	#002,OBJCON
+		mov	#AskM3,ASKINS
+		jmp	AskRET
+AskEnd:		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		mov	(SP)+,R0
+		jmp	GetCom
+AskM4:		.ascii "I don't know how to ask that thing!" ;;; asciz
+		.byte 0
+AskM1:		.ascii "Not here to ask." ;;; asciz
+		.byte 0
+AskM2:		.ascii "The proffesor says:"
+		.byte 12
+		.ascii "    'Good help is hard to find. It is even worth"
+		.byte 12
+		.ascii "    paying for...'"
+		.byte 12,00
+AskM3:		.ascii "The happy proffesor takes your coin, smiles and says:"
+		.byte 12
+		.ascii "    'Super users don't allow food or DRINK in the"
+		.byte 12
+		.ascii "     terminal rooms...'"
+		.byte 12,00
+		.even
+ASKTBL:		aKEY
+		aPSW
+		aPAS
+		aCOIN
+		aPDP
+		aMAT
+		aJLT
+		aCOK
+		aSEV
+		aCHP
+		aBRD
+		aPRT
+		aFMA
+		aRS2
+		aAMB
+		aSUN
+		aV52
+		aV50
+		aINS
+		aSYS
+		aMAN
+ASKINS:		aHAK
+aKEY:		.ascii "I belong to dave." ;;; asciz
+		.byte 0
+aPRT:
+aFMA:
+aPSW:		.ascii "read me!" ;;; asciz
+		.byte 0
+aCOIN:		.ascii "spend me!" ;;; asciz
+		.byte 0
+aMAT:
+aPAS:
+aPDP:		.ascii "The book does not reply." ;;; asciz
+		.byte 0
+aSEV:
+aCOK:
+aJLT:		.ascii "Drink me!" ;;; asciz
+		.byte 0
+aCHP:		.ascii "ld a,45; jrnz 3400; out f1,a; ld HL,BC; ...." ;;; asciz
+		.byte 0
+aRS2:
+aBRD:		.ascii "101110101000101010111010" ;;; asciz
+		.byte 0
+aAMB:
+aSUN:
+aV52:
+aV50:		.ascii "The terminal can only reply -click-click-beep!" ;;; asciz
+		.byte 0
+aMAN:		.ascii "Im insane." ;;; asciz
+		.byte 0
+aINS:		.ascii "The insane hacker mumbles:"
+		.byte 12
+		.ascii "    'Dave keeps a key to the machine room"
+		.byte 12
+		.ascii "    in his office.'" ;;; asciz
+		.byte 0
+aSYS:		.ascii "The super user exlaims:"
+		.byte 12
+		.ascii "   'Hi, Im preventing you from entering!'" ;;; asciz
+		.byte 0
+aHAK:		.byte 12,00
+		.even
+
+
+cSCORE:		clr	SCRPTS
+		mov	#OBTable,R0
+		mov	#ScoreTb,R1
+ScLop:		cmp	(R0),#00
+		beq	ScEnd
+		cmp	(R0),#01
+		bne	ScSkp
+		add	(R1),SCRPTS
+ScSkp:		add	#4,R0
+		add	#2,R1
+		br	ScLop
+ScEnd:		mov	#ScMsg1,R1
+		jsr	PC,PREZ
+		mov	SCRPTS,R1
+		jsr	PC,PROCT
+		jsr	PC,PrCR
+		jmp	GetCom
+ScMsg1:		.ascii "Your decimal score is: " ;;; asciz
+		.byte 0
+		.even
+ScoreTb:	.word	$200,$200,$45,$47,$48,$120,$55,$65,$75
+		.word   $50,$101,$51,$56,0,0,0,0,0,0,0,0
+SCRPTS:		.word 0
+
+
+cNORTH:
+cSOUTH:
+cEAST:
+cWEST:		mov	#BUFFER,SECWRD
+		jmp	cGO
+
+cWAIT:		mov	R1,-(SP)
+		mov	#Temp21,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		jsr	PC,MovStf
+		mov	(SP)+,R1
+		jmp	GetCom
+Temp21:		.ascii ".... Time Passes ...." ;;; asciz
+		.byte 0
+
+NotImp:		mov	R1,-(SP)
+		mov	#Temp5,R1
+		jsr	PC,PREZ
+		jsr	PC,PrCR
+		mov	(SP)+,R1
+		jmp 	GetCom
+Temp5:		.ascii "That command does not operate yet." ;;; asciz
+		.byte 0
+		.even
+
+RUNTBL:		cGET
+		cNORTH
+		cSOUTH
+		cEAST
+		cWEST
+		cGET			;cTAKE
+		cPUT			;cDROP
+		cPUT
+		cLOOK
+		cHELP
+		cINV
+		cLOGIN
+		cDRINK
+		cREAD
+		cQUIT
+		cGO			;cMOVE
+		cWAIT
+		cUSE
+		cEAT
+		cLOGOUT
+		cREBOOT
+		cSCORE
+		cGO
+		cASK
+
+;		.end

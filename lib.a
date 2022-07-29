@@ -1,0 +1,162 @@
+;	.start bluh
+;-----------------------------------------------------------------------------;
+; Command decoder in pdp-11, searches a command table pointed to by R1, for a ;
+; command pointed to by R0.						      ;
+; The table consists of null-teriminated ascii strings, with two nulls	      ;
+; indicating the end of the table.					      ;
+; The command to find is a null-terminated string.			      ;
+; The command is decoded to a number in R0, with a zero indicating that the   ;
+; command was not found.						      ;
+;-----------------------------------------------------------------------------;
+	.export COMAND,PREZ,COMPR,PROCT
+
+COMAND:	mov R0,Comand
+	mov R1,Table
+	mov R2,-(SP)
+	mov R3,-(SP)
+	mov R4,-(SP)
+	mov R5,-(SP)
+
+	mov #1,R5	;Command counter = 1 ie. command #1
+
+FINDME:	movb (R1),R2	;Get byte from Table
+	bic #177400,R2	;Clear high bits
+	beq NoFind	;End of Table, command not found
+	jsr PC,CHECK	;Check for command in table
+	cmp R4,#1	;Was it a match?
+	beq Find	; Yes -- Exit with command # in R0
+	jsr PC,SKIP	;Skip to next entry in command table
+	inc R5		;Next message
+	jmp FINDME	;Continue to search for a match
+
+SKIP:	movb (R1),R2	;
+	inc R1		;This will move R1 to point to the next entry in
+	bic #177400,R2	;the command table.
+	bne SKIP	;
+	rts PC		;
+
+CHECK:	clr R4		;Clear match flag, 0=No match, 1=Match
+	mov Comand,R0	;Set pointer to start of command
+SCAN:	movb (R1),R2	;Get byte from table
+	bic #177400,R2	;Clear high bits
+	beq ENDCHK	;End of Command in table, ie. no match
+	movb (R0),R3	;Get byte from command
+	bic #177400,R3	;Clear high bits
+	beq ENDCHK	;End of command
+	cmp R2,R3	;Are they the same?
+	beq YES		; Yes -- put a 1 in R4
+NO:	clr R4		;Put a 0 in R4, ie. no match
+	jmp ENDCHK	;Did not match, no need to check the remaining chars.
+YES:	mov #1,R4	;Put a 1 in R4 ie. match
+	inc R1
+	inc R0
+	jmp SCAN	;Continue scaning
+ENDCHK:	rts PC		;Return
+
+NoFind:	clr R0		;No Match
+	jmp Quit	;Done
+Find:	mov R5,R0	;Put command # into R0
+Quit:	mov (SP)+,R5
+	mov (SP)+,R4
+	mov (SP)+,R3
+	mov (SP)+,R2
+	mov Table,R1
+	rts PC
+Comand:	.word 0
+Table:	.word 0
+	.even
+
+
+			;Print a variable length string of text terminated
+			;with a null byte.
+			;Entry:
+			;	R1 -- Contains start address of sting to print
+			;Exit:
+			;	All registers preserved, CC undefined.
+
+PREZ:	mov R0,-(SP)
+	mov R2,-(SP)
+	mov R1,BUFF
+	clr R2		;Zero counter
+BYTE:	movb (R1),R0	;Get byte.
+	beq QUIT	;Null? Exit if so...
+	inc R2		;Count it
+	inc R1		;Point to next
+	bic #177400,R0	;Mask off high-byte of R0
+	jmp BYTE	;Loop back
+QUIT:	mov R2,LEN
+	jsr PC,PRINT
+	mov BUFF,R1
+	mov (SP)+,R2
+	mov (SP)+,R0
+	rts PC
+PRINT:	mov #1,R0
+	trap 4
+BUFF:	.word 0
+LEN:	.word 0
+	rts PC
+
+
+		.even
+PROCT:		mov	R1,-(SP)		;R1 contains value.
+		mov	R2,-(SP)
+		mov	R0,-(SP)
+
+		mov	#LSDIG+2,R2		;R2 points to ascii.
+
+		tst	R1			;Is value negative?
+		bpl	Loop			;If not exit.
+		mov	#'-,SIGN		;else put minus sign.
+		neg	R1			;Get absolute value of R1
+
+Loop:		clr	R0			;Upper half of divisor.
+		div	#$10,R0		;divide value by 10
+		add	R1,-(R2)		;put remainder in string.
+		mov	R0,R1			;reinitialize divisor.
+		cmp	R1,#00			;Done yet?
+		bne	Loop			;If not continue...
+
+		mov	#1,R0			;print number out.
+		trap	4
+		SIGN
+		$14
+
+		mov	#'0,MSDIG		;Re-store data....
+		mov	#'0,MSDIG+2
+		mov	#'0,MSDIG+4
+		mov	#'0,MSDIG+6
+		mov	#'0,LSDIG
+		mov	#'+,SIGN
+
+		mov	(SP)+,R0		;Re-store registers...
+		mov	(SP)+,R2
+		mov	(SP)+,R1
+		rts	PC
+
+SIGN:		.word '+
+MSDIG:		.word '0
+		.word '0
+		.word '0
+		.word '0
+LSDIG:		.word '0
+		.word 12
+		.even
+
+
+COMPR:		mov	R1,-(SP)
+Again:		cmpb	(R0),(R1)
+		bne	NotEqu
+		cmpb	(R1),#00
+		beq	Done
+		inc	R0
+		inc	R1
+		br	Again
+Done:		mov	#01,R0
+		mov	(SP)+,R1
+		rts	PC
+NotEqu:		mov	#00,R0
+		mov	(SP)+,R1
+		rts	PC
+
+;		.end
+	
