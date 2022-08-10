@@ -7,7 +7,7 @@ Me, showing off the Rasberry Pi based kit that looks like a PDP-11 front panel. 
 [https://obsolescence.wixsite.com/obsolescence/pidp-11]
 
 # Walkthrough
-I got this code working again by porting it to BSD 2.11 under a pdp-11 architecure running under SIMH. Whew...
+I got this code working again by porting it to BSD 2.11 running under SIMH. Whew...
 Anyway, here is the game play walkthrough.
 
 ```
