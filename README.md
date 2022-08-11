@@ -7,7 +7,7 @@ Me, showing off the Rasberry Pi based kit that looks like a PDP-11 front panel. 
 [https://obsolescence.wixsite.com/obsolescence/pidp-11]
 
 # MAP
-![img](https://github.com/kjs452/cpsc/blob/main/cpsc_map_all_sm.jpg "CPSC map")
+![img](https://github.com/kjs452/cpsc/blob/main/cpsc_map_all.jpg "CPSC map")
 
 # Walkthrough
 I got this code working again by porting it to BSD 2.11 running under SIMH. Whew...
