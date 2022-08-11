@@ -6,6 +6,9 @@ Adventure game written in pdp-11 assembly. I wrote this in college in 1989. Mart
 Me, showing off the Rasberry Pi based kit that looks like a PDP-11 front panel. It is called the PiDP-11.
 [https://obsolescence.wixsite.com/obsolescence/pidp-11]
 
+# MAP
+![img](https://github.com/kjs452/cpsc/blob/main/cpsc_map_all_sm.jpg "CPSC map")
+
 # Walkthrough
 I got this code working again by porting it to BSD 2.11 running under SIMH. Whew...
 Anyway, here is the game play walkthrough.
