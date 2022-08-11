@@ -1,5 +1,5 @@
 # cpsc
-Adventure game written in pdp-11 assembly. I wrote this in college in 1989. Martin Zimmerman write the parse routines! The map was based on the layout of the computer science ground floor. You had to become super user and reboot the vax to win.
+Adventure game written in pdp-11 assembly. I wrote this in college in 1989. Martin Zimmerman wrote the parse routines! The map was based on the layout of the computer science ground floor. You had to become super user and reboot the vax to win.
 
 ![img](https://github.com/kjs452/cpsc/blob/main/kenpdp11.jpg "Me with the PiDP-11")
 
@@ -8,6 +8,16 @@ Me, showing off the Rasberry Pi based kit that looks like a PDP-11 front panel. 
 
 # MAP
 ![img](https://github.com/kjs452/cpsc/blob/main/cpsc_map_all.jpg "CPSC map")
+
+# PUZZLES
+1. Go to continious tutorial room to get "help". Learn the goal of game.
+2. Ask professor. Learn that he needs to be paid. Get coin and ask him again. He tells you about Dave
+(the super user) who does not allow food or drink in the terminal rooms.
+3. The next puzzle is dropping a beverage in the VAXA termainal room. Which causes DAVE to leave
+his office and show up where the drink was dropped.
+4. Now you can get the machine room key from Dave's office.
+5. In the machine room is the root password, you must now find a terminal.
+6. Last puzzle, you find a terminal and login as root and reboot the vax.
 
 # Walkthrough
 I got this code working again by porting it to BSD 2.11 running under SIMH. Whew...
